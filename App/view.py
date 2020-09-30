@@ -22,7 +22,6 @@
 
 import sys
 import config
-from DISClib.ADT import list as lt
 from App import controller
 assert config
 
@@ -50,9 +49,9 @@ def printMenu():
     print("*******************************************")
     print("Bienvenido")
     print("1- Inicializar Analizador")
-    print("2- Cargar información de accidentes")
-    print("3- Requerimento 1")
-    print("4- Requerimento 2")
+    print("2- Cargar información de crimenes")
+    print("3- Consultar crimenes en un rango de fechas")
+    print("4- Consultar crimenes por codigo y fecha")
     print("0- Salir")
     print("*******************************************")
 
@@ -71,13 +70,28 @@ while True:
 
     elif int(inputs[0]) == 2:
         print("\nCargando información de crimenes ....")
+        controller.loadData(cont, crimefile)
+        print('Crimenes cargados: ' + str(controller.crimesSize(cont)))
+        print('Altura del arbol: ' + str(controller.indexHeight(cont)))
+        print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
+        print('Menor Llave: ' + str(controller.minKey(cont)))
+        print('Mayor Llave: ' + str(controller.maxKey(cont)))
 
     elif int(inputs[0]) == 3:
         print("\nBuscando crimenes en un rango de fechas: ")
-
+        initialDate = input("Rango Inicial (YYYY-MM-DD): ")
+        finalDate = input("Rango Inicial (YYYY-MM-DD): ")
+        total = controller.getCrimesByRange(cont, initialDate, finalDate)
+        print("\nTotal de crimenes en el rango de fechas: " + str(total))
 
     elif int(inputs[0]) == 4:
-        print("\nRequerimiento No 1 del reto 3: ")
+        print("\nBuscando crimenes x grupo de ofensa en una fecha: ")
+        initialDate = input("Fecha (YYYY-MM-DD): ")
+        offensecode = input("Codigo de ofensa: ")
+        numoffenses = controller.getCrimesByRangeCode(cont, initialDate,
+                                                      offensecode)
+        print("\nTotal de ofensas tipo: " + offensecode + " en esa fecha:  " +
+              str(numoffenses))
 
     else:
         sys.exit(0)
