@@ -192,6 +192,14 @@ def getCrimesByRange(analyzer, initialDate, finalDate):
         totcrimes += lt.size(lstdate['lstcrimes'])
     return totcrimes
 
+def getcrimesbydate(analizer,date):
+    lst=om.get(analizer["dateIndex"],date)
+    lstiterator= it.newIterator(lst)
+    total_crimenes=0
+    while (it.hasNext(lstiterator)):
+        lstdate = it.next(lstiterator)
+        total_crimenes += lt.size(lstdate['lstcrimes'])
+    return total_crimenes
 
 def getCrimesByRangeCode(analyzer, initialDate, offensecode):
     """

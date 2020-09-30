@@ -50,7 +50,7 @@ def printMenu():
     print("Bienvenido")
     print("1- Inicializar Analizador")
     print("2- Cargar información de crimenes")
-    print("3- Consultar crimenes en un rango de fechas")
+    print("3- Consultar crimenes en una fecha")
     print("4- Consultar crimenes por codigo y fecha")
     print("0- Salir")
     print("*******************************************")
@@ -78,20 +78,11 @@ while True:
         print('Mayor Llave: ' + str(controller.maxKey(cont)))
 
     elif int(inputs[0]) == 3:
-        print("\nBuscando crimenes en un rango de fechas: ")
-        initialDate = input("Rango Inicial (YYYY-MM-DD): ")
-        finalDate = input("Rango Inicial (YYYY-MM-DD): ")
-        total = controller.getCrimesByRange(cont, initialDate, finalDate)
+        print("\nBuscando crimenes en una fecha: ")
+        Date = input("Fecha (YYYY-MM-DD): ")
+        total = controller.getCrimesBydate(cont,Date)
         print("\nTotal de crimenes en el rango de fechas: " + str(total))
 
-    elif int(inputs[0]) == 4:
-        print("\nBuscando crimenes x grupo de ofensa en una fecha: ")
-        initialDate = input("Fecha (YYYY-MM-DD): ")
-        offensecode = input("Codigo de ofensa: ")
-        numoffenses = controller.getCrimesByRangeCode(cont, initialDate,
-                                                      offensecode)
-        print("\nTotal de ofensas tipo: " + offensecode + " en esa fecha:  " +
-              str(numoffenses))
 
     else:
         sys.exit(0)
