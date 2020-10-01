@@ -61,6 +61,7 @@ def loadData(analyzer, crimesfile):
                                 delimiter=",")
     for crime in input_file:
         model.addCrime(analyzer, crime)
+        print(analyzer["dateIndex"])
     return analyzer
 
 # ___________________________________________________
@@ -114,7 +115,7 @@ def getCrimesByRange(analyzer, initialDate, finalDate):
 
 def getCrimesBydate(analyzer, date):
     fecha=datetime.datetime.strptime(date,"%Y-%m-%d")
-    retorno=model.getcrimesbydate(analyzer,date)
+    retorno=model.getcrimesbydate(analyzer,fecha.date())
     return retorno
 
 

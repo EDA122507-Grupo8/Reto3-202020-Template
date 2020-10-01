@@ -192,14 +192,12 @@ def getCrimesByRange(analyzer, initialDate, finalDate):
         totcrimes += lt.size(lstdate['lstcrimes'])
     return totcrimes
 
-def getcrimesbydate(analizer,date):
-    lst=om.get(analizer["dateIndex"],date)
-    lstiterator= it.newIterator(lst)
-    total_crimenes=0
-    while (it.hasNext(lstiterator)):
-        lstdate = it.next(lstiterator)
-        total_crimenes += lt.size(lstdate['lstcrimes'])
+def getcrimesbydate(analyzer,date):
+    lst=om.get(analyzer["dateIndex"],date)
+    #print(lst)
+    total_crimenes=om.size(lst)
     return total_crimenes
+
 
 def getCrimesByRangeCode(analyzer, initialDate, offensecode):
     """
@@ -213,7 +211,6 @@ def getCrimesByRangeCode(analyzer, initialDate, offensecode):
         if numoffenses is not None:
             return m.size(me.getValue(numoffenses)['lstoffenses'])
         return 0
-
 
 # ==============================
 # Funciones de Comparacion
