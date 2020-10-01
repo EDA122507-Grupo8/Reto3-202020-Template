@@ -195,7 +195,23 @@ def getCrimesByRange(analyzer, initialDate, finalDate):
 def getcrimesbydate(analyzer,date):
     lst=om.get(analyzer["dateIndex"],date)
     #print(lst)
-    total_crimenes=lt.size(lst["value"]["lstcrimes"])
+    pos=lst["value"]["lstcrimes"]["first"]
+    a1=0
+    a2=0
+    a3=0
+    a4=0
+    while pos!=None:
+        if pos["info"]["Severity"]=="1":
+            a1+=1
+        elif pos["info"]["Severity"]=="2":
+            a2+=1
+        elif pos["info"]["Severity"]=="3":
+            a3+=1
+        elif pos["info"]["Severity"]=="4":
+            a4+=1
+        pos=pos["next"]
+
+    total_crimenes={"total":lt.size(lst["value"]["lstcrimes"]),"grado_1":a1,"grado_2":a2,"grado_3":a3,"grado_4":a4}
     return total_crimenes
 
 
