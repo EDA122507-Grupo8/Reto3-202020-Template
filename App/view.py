@@ -37,7 +37,7 @@ operación seleccionada.
 # ___________________________________________________
 
 
-crimefile = 'crime-utf8.csv'
+crimefile = 'us_accidents_small.csv'
 
 # ___________________________________________________
 #  Menu principal

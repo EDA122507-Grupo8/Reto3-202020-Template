@@ -83,7 +83,7 @@ def updateDateIndex(map, crime):
     Si no se encuentra creado un nodo para esa fecha en el arbol
     se crea y se actualiza el indice de tipos de crimenes
     """
-    occurreddate = crime['OCCURRED_ON_DATE']
+    occurreddate = crime['Start_Time']
     crimedate = datetime.datetime.strptime(occurreddate, '%Y-%m-%d %H:%M:%S')
     entry = om.get(map, crimedate.date())
     if entry is None:
@@ -105,11 +105,11 @@ def addDateIndex(datentry, crime):
     lst = datentry['lstcrimes']
     lt.addLast(lst, crime)
     offenseIndex = datentry['offenseIndex']
-    offentry = m.get(offenseIndex, crime['OFFENSE_CODE_GROUP'])
+    offentry = m.get(offenseIndex, crime['Description'])
     if (offentry is None):
-        entry = newOffenseEntry(crime['OFFENSE_CODE_GROUP'], crime)
+        entry = newOffenseEntry(crime['Description'], crime)
         lt.addLast(entry['lstoffenses'], crime)
-        m.put(offenseIndex, crime['OFFENSE_CODE_GROUP'], entry)
+        m.put(offenseIndex, crime['Description'], entry)
     else:
         entry = me.getValue(offentry)
         lt.addLast(entry['lstoffenses'], crime)
@@ -195,7 +195,7 @@ def getCrimesByRange(analyzer, initialDate, finalDate):
 def getcrimesbydate(analyzer,date):
     lst=om.get(analyzer["dateIndex"],date)
     #print(lst)
-    total_crimenes=om.size(lst)
+    total_crimenes=lt.size(lst["value"]["lstcrimes"])
     return total_crimenes
 
 
