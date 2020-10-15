@@ -252,3 +252,13 @@ def compareOffenses(offense1, offense2):
         return 1
     else:
         return -1
+
+
+def compare_accidents(accident1,accident2):
+    offense = me.getKey(accident2)
+    if (accident1 == offense):
+        return 0
+    elif (accident1 > offense):
+        return 1
+    else:
+        return -1

@@ -37,7 +37,7 @@ operación seleccionada.
 # ___________________________________________________
 
 
-crimefile = 'crime-utf8.csv'
+accidentfile = 'us_accidents_small.csv'
 
 # ___________________________________________________
 #  Menu principal
@@ -49,9 +49,9 @@ def printMenu():
     print("*******************************************")
     print("Bienvenido")
     print("1- Inicializar Analizador")
-    print("2- Cargar información de crimenes")
-    print("3- Consultar crimenes en una fecha")
-    print("4- Consultar crimenes por codigo y fecha")
+    print("2- Cargar información de accidentes")
+    print("3- Consultar accidentes en una fecha")
+    print("4- req 2")
     print("0- Salir")
     print("*******************************************")
 
@@ -69,19 +69,24 @@ while True:
         cont = controller.init()
 
     elif int(inputs[0]) == 2:
-        print("\nCargando información de crimenes ....")
-        controller.loadData(cont, crimefile)
-        print('Crimenes cargados: ' + str(controller.crimesSize(cont)))
+        
+        print("\nCargando información de accidentes ....")
+        accidentfile=input("escriba el nombre del archivo\n")
+        controller.loadData(cont, accidentfile)
+        print("si se necesita cargar mas archivos llame otra vez la funcion")
+        print('Accidentes cargados: ' + str(controller.crimesSize(cont)))
         print('Altura del arbol: ' + str(controller.indexHeight(cont)))
         print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
         print('Menor Llave: ' + str(controller.minKey(cont)))
         print('Mayor Llave: ' + str(controller.maxKey(cont)))
+        
 
     elif int(inputs[0]) == 3:
-        print("\nBuscando crimenes en una fecha: ")
+        print("\nBuscando accidentes en una fecha: ")
         Date = input("Fecha (YYYY-MM-DD): ")
         total = controller.getCrimesBydate(cont,Date)
-        print("\nTotal de crimenes en el rango de fechas: " + str(total))
+        print("\nTotal de accidentes en el rango de fechas: " + str(total["total"]))
+        print(total)
 
 
     else:
