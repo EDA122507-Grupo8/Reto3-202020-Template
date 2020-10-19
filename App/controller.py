@@ -52,15 +52,15 @@ def init():
 #  de datos en los modelos
 # ___________________________________________________
 
-def loadData(analyzer, crimesfile):
+def loadData(analyzer, archivo):
     """
     Carga los datos de los archivos CSV en el modelo
     """
-    crimesfile = cf.data_dir + crimesfile
-    input_file = csv.DictReader(open(crimesfile, encoding="utf-8"),
+    archivo = cf.data_dir + archivo
+    input_file = csv.DictReader(open(archivo, encoding="utf-8"),
                                 delimiter=",")
-    for crime in input_file:
-        model.addCrime(analyzer, crime)
+    for accidente in input_file:
+        model.addAccident(analyzer, accidente)
         
     return analyzer
 
@@ -69,11 +69,11 @@ def loadData(analyzer, crimesfile):
 # ___________________________________________________
 
 
-def crimesSize(analyzer):
+def accidentSize(analyzer):
     """
     Numero de crimenes leidos
     """
-    return model.crimesSize(analyzer)
+    return model.accidentSize(analyzer)
 
 
 def indexHeight(analyzer):
@@ -129,3 +129,11 @@ def getCrimesByRangeCode(analyzer, initialDate,
     initialDate = datetime.datetime.strptime(initialDate, '%Y-%m-%d')
     return model.getCrimesByRangeCode(analyzer, initialDate.date(),
                                       offensecode)
+def estado_mayor(analyzer, initialDate, finalDate):
+    """
+    Retorna el total de crimenes en un rango de fechas
+    """
+    initialDate = datetime.datetime.strptime(initialDate, '%Y-%m-%d')
+    finalDate = datetime.datetime.strptime(finalDate, '%Y-%m-%d')
+    return model.estado_mayor(analyzer, initialDate.date(),
+                                  finalDate.date())

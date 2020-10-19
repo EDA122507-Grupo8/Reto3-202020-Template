@@ -27,6 +27,7 @@ from DISClib.DataStructures import mapentry as me
 from DISClib.ADT import map as m
 import datetime
 assert config
+from math import radians, cos, sin, asin, sqrt
 
 """
 En este archivo definimos los TADs que vamos a usar,
@@ -53,12 +54,12 @@ def newAnalyzer():
 
     Retorna el analizador inicializado.
     """
-    analyzer = {'crimes': None,
-                'dateIndex': None
+    analyzer = {'accidentes': None,
+                'fechas': None
                 }
 
-    analyzer['crimes'] = lt.newList('SINGLE_LINKED', compareIds)
-    analyzer['dateIndex'] = om.newMap(omaptype='RBT',
+    analyzer['accidentes'] = lt.newList('SINGLE_LINKED', compareIds)
+    analyzer['fechas'] = om.newMap(omaptype='RBT',
                                       comparefunction=compareDates)
     return analyzer
 
@@ -66,15 +67,15 @@ def newAnalyzer():
 # Funciones para agregar informacion al catalogo
 
 
-def addCrime(analyzer, crime):
+def addAccident(analyzer, accidente):
     """
     """
-    lt.addLast(analyzer['crimes'], crime)
-    updateDateIndex(analyzer['dateIndex'], crime)
+    lt.addLast(analyzer['accidentes'], accidente)
+    updateDateIndex(analyzer['fechas'], accidente)
     return analyzer
 
 
-def updateDateIndex(map, crime):
+def updateDateIndex(map, accidente):
     """
     Se toma la fecha del crimen y se busca si ya existe en el arbol
     dicha fecha.  Si es asi, se adiciona a su lista de crimenes
@@ -83,49 +84,73 @@ def updateDateIndex(map, crime):
     Si no se encuentra creado un nodo para esa fecha en el arbol
     se crea y se actualiza el indice de tipos de crimenes
     """
-    occurreddate = crime['Start_Time']
-    crimedate = datetime.datetime.strptime(occurreddate, '%Y-%m-%d %H:%M:%S')
-    entry = om.get(map, crimedate.date())
+    occurreddate = accidente['Start_Time']
+    accidentdate = datetime.datetime.strptime(occurreddate, '%Y-%m-%d %H:%M:%S')
+    entry = om.get(map, accidentdate.date())
     if entry is None:
-        datentry = newDataEntry(crime)
-        om.put(map, crimedate.date(), datentry)
+        datentry = newDataEntry(accidente)
+        om.put(map, accidentdate.date(), datentry)
     else:
         datentry = me.getValue(entry)
-    addDateIndex(datentry, crime)
+    addDateIndex(datentry, accidente)
     return map
 
+def estado_mayor(analyzer, initial, final):
+    lst = om.values(analyzer['dateIndex'], initial, final)
+    mapa_retorno=m.newMap(20030,20111,maptype='CHAINING',loadfactor=0.9,comparefunction=None)
+    dict={}
+    retorno=""
+    first=lst["first"]
+    print(lst)
+    accidente=first["info"]["offenseIndex"]["table"]["elements"]
+    for nodo in accidente:
+        if nodo["value"]!=None:
+            actual=nodo["value"]["lstoffenses"]["first"]["info"]["State"]
+            dict[actual]=1
+            #m.put(mapa_retorno,nodo["value"]["lstoffenses"]["first"]["info"]["DISTRICT"],1)
+    then=lst["first"]["next"]
+    #then=None
+    while then!=None:
+        accidente2=then["info"]["offenseIndex"]["table"]["elements"]
+        for nodo in accidente2:
+            if nodo["value"]!=None:
+                actual2=nodo["value"]["lstoffenses"]["first"]["info"]["State"]
+                dict[actual2]=dict.get(actual2,0)+1
+        then=then["next"]
+    
+    return print(dict)
 
-def addDateIndex(datentry, crime):
+def addDateIndex(datentry, accidente):
     """
     Actualiza un indice de tipo de crimenes.  Este indice tiene una lista
     de crimenes y una tabla de hash cuya llave es el tipo de crimen y
     el valor es una lista con los crimenes de dicho tipo en la fecha que
     se está consultando (dada por el nodo del arbol)
     """
-    lst = datentry['lstcrimes']
-    lt.addLast(lst, crime)
+    lst = datentry['lstaccidents']
+    lt.addLast(lst, accidente)
     offenseIndex = datentry['offenseIndex']
-    offentry = m.get(offenseIndex, crime['Description'])
+    offentry = m.get(offenseIndex, accidente['Description'])
     if (offentry is None):
-        entry = newOffenseEntry(crime['Description'], crime)
-        lt.addLast(entry['lstoffenses'], crime)
-        m.put(offenseIndex, crime['Description'], entry)
+        entry = newOffenseEntry(accidente['Description'], accidente)
+        lt.addLast(entry['lstoffenses'], accidente)
+        m.put(offenseIndex, accidente['Description'], entry)
     else:
         entry = me.getValue(offentry)
-        lt.addLast(entry['lstoffenses'], crime)
+        lt.addLast(entry['lstoffenses'], accidente)
     return datentry
 
 
-def newDataEntry(crime):
+def newDataEntry(accidente):
     """
     Crea una entrada en el indice por fechas, es decir en el arbol
     binario.
     """
-    entry = {'offenseIndex': None, 'lstcrimes': None}
+    entry = {'offenseIndex': None, 'lstaccidents': None}
     entry['offenseIndex'] = m.newMap(numelements=30,
                                      maptype='PROBING',
                                      comparefunction=compareOffenses)
-    entry['lstcrimes'] = lt.newList('SINGLE_LINKED', compareDates)
+    entry['lstaccidents'] = lt.newList('SINGLE_LINKED', compareDates)
     return entry
 
 
@@ -145,39 +170,39 @@ def newOffenseEntry(offensegrp, crime):
 # ==============================
 
 
-def crimesSize(analyzer):
+def accidentSize(analyzer):
     """
     Número de crimenes
     """
-    return lt.size(analyzer['crimes'])
+    return lt.size(analyzer['accidentes'])
 
 
 def indexHeight(analyzer):
     """
     Altura del arbol
     """
-    return om.height(analyzer['dateIndex'])
+    return om.height(analyzer['fechas'])
 
 
 def indexSize(analyzer):
     """
     Numero de elementos en el indice
     """
-    return om.size(analyzer['dateIndex'])
+    return om.size(analyzer['fechas'])
 
 
 def minKey(analyzer):
     """
     Llave mas pequena
     """
-    return om.minKey(analyzer['dateIndex'])
+    return om.minKey(analyzer['fechas'])
 
 
 def maxKey(analyzer):
     """
     Llave mas grande
     """
-    return om.maxKey(analyzer['dateIndex'])
+    return om.maxKey(analyzer['fechas'])
 
 
 def getCrimesByRange(analyzer, initialDate, finalDate):
@@ -193,9 +218,9 @@ def getCrimesByRange(analyzer, initialDate, finalDate):
     return totcrimes
 
 def getcrimesbydate(analyzer,date):
-    lst=om.get(analyzer["dateIndex"],date)
+    lst=om.get(analyzer["fechas"],date)
     #print(lst)
-    pos=lst["value"]["lstcrimes"]["first"]
+    pos=lst["value"]["lstaccidents"]["first"]
     a1=0
     a2=0
     a3=0
@@ -211,7 +236,7 @@ def getcrimesbydate(analyzer,date):
             a4+=1
         pos=pos["next"]
 
-    total_crimenes={"total":lt.size(lst["value"]["lstcrimes"]),"grado_1":a1,"grado_2":a2,"grado_3":a3,"grado_4":a4}
+    total_crimenes={"total":lt.size(lst["value"]["lstaccidents"]),"grado_1":a1,"grado_2":a2,"grado_3":a3,"grado_4":a4}
     return total_crimenes
 
 
@@ -278,3 +303,45 @@ def compare_accidents(accident1,accident2):
         return 1
     else:
         return -1
+
+def prueba(arbol,fecha1,fecha2):
+    print(arbol)
+    retorno=om.values(arbol,fecha1,fecha2)
+    return print(retorno)
+
+def bono(cont,lat,lon,radio):
+    lat=radians(lat)
+    lon=radians(lon)
+    dict={}
+    contador=0
+    first=cont["accidentes"]["first"]
+    fecha_analisis_first=first["info"]["Start_Time"][0:10]
+    day_first= datetime.datetime.strptime(fecha_analisis_first, '%Y-%m-%d').strftime("%A")
+    first_lat=radians(float(first["info"]["Start_Lat"]))
+    first_lon=radians(float(first["info"]["Start_Lng"]))
+    dlon=first_lon-lon
+    dlat=first_lat-lat
+    a=sin(dlat/2)**2+cos(lat)*cos(first_lat)*sin(dlon/2)**2
+    c=2*asin(sqrt(a))
+    r=6371
+    resultado=c*r
+    if resultado<=radio:
+        dict[day_first]=dict.get(day_first,0)+1
+        contador+=1
+    then=first["next"]
+    while then!=None:
+        fecha_analisis_then=then["info"]["Start_Time"][0:10]
+        day_then=datetime.datetime.strptime(fecha_analisis_then, '%Y-%m-%d').strftime("%A")
+        then_lat=radians(float(then["info"]["Start_Lat"]))
+        then_lon=radians(float(then["info"]["Start_Lng"]))
+        dlon2=then_lon-lon
+        dlat2=then_lat-lat
+        a=sin(dlat/2)**2+cos(lat)*cos(then_lat)*sin(dlon2/2)**2
+        c=2*asin(sqrt(a))
+        resultado2=c*r
+        if resultado2<=radio:
+            dict[day_then]=dict.get(day_then,0)+1
+            contador+=1
+        then=then["next"]
+
+    return print(dict,"El total es "+str(contador))

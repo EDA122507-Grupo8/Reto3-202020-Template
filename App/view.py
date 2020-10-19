@@ -24,7 +24,7 @@ import sys
 import config
 from App import controller
 assert config
-
+import model as mdl
 """
 La vista se encarga de la interacción con el usuario.
 Presenta el menu de opciones  y  por cada seleccion
@@ -74,12 +74,11 @@ while True:
         accidentfile=input("escriba el nombre del archivo\n")
         controller.loadData(cont, accidentfile)
         print("si se necesita cargar mas archivos llame otra vez la funcion")
-        print('Accidentes cargados: ' + str(controller.crimesSize(cont)))
+        print('Accidentes cargados: ' + str(controller.accidentSize(cont)))
         print('Altura del arbol: ' + str(controller.indexHeight(cont)))
         print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
         print('Menor Llave: ' + str(controller.minKey(cont)))
         print('Mayor Llave: ' + str(controller.maxKey(cont)))
-        
 
     elif int(inputs[0]) == 3:
         print("\nBuscando accidentes en una fecha: ")
@@ -88,7 +87,12 @@ while True:
         print("\nTotal de accidentes en el rango de fechas: " + str(total["total"]))
         print(total)
 
-
+    elif int(inputs[0]) == 5:
+        #mdl.bono(cont,39.865150,-84.058720,1000000)
+        initialDate = input("Rango Inicial (YYYY-MM-DD): ")
+        finalDate = input("Rango Final (YYYY-MM-DD): ")
+        mdl.prueba(cont,initialDate,finalDate)
+        #controller.estado_mayor(cont, initialDate, finalDate)
     else:
         sys.exit(0)
 sys.exit(0)
