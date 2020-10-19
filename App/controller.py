@@ -61,7 +61,7 @@ def loadData(analyzer, crimesfile):
                                 delimiter=",")
     for crime in input_file:
         model.addCrime(analyzer, crime)
-        print(analyzer["dateIndex"])
+        
     return analyzer
 
 # ___________________________________________________
