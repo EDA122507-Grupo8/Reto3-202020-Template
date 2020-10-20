@@ -130,10 +130,8 @@ def getCrimesByRangeCode(analyzer, initialDate,
     return model.getCrimesByRangeCode(analyzer, initialDate.date(),
                                       offensecode)
 def estado_mayor(analyzer, initialDate, finalDate):
-    """
-    Retorna el total de crimenes en un rango de fechas
-    """
-    initialDate = datetime.datetime.strptime(initialDate, '%Y-%m-%d')
-    finalDate = datetime.datetime.strptime(finalDate, '%Y-%m-%d')
-    return model.estado_mayor(analyzer, initialDate.date(),
-                                  finalDate.date())
+    
+    return model.estado_mayor(analyzer, initialDate,
+                                  finalDate)
+def bono(arbol,lat,lon,radio):
+    return model.bono(arbol,lat,lon,radio)
