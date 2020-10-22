@@ -24,7 +24,8 @@ import sys
 import config
 from App import controller
 assert config
-
+import model as mdl
+import datetime
 """
 La vista se encarga de la interacción con el usuario.
 Presenta el menu de opciones  y  por cada seleccion
@@ -37,7 +38,7 @@ operación seleccionada.
 # ___________________________________________________
 
 
-crimefile = 'crime-utf8.csv'
+accidentfile = 'us_accidents_small.csv'
 
 # ___________________________________________________
 #  Menu principal
@@ -49,9 +50,10 @@ def printMenu():
     print("*******************************************")
     print("Bienvenido")
     print("1- Inicializar Analizador")
-    print("2- Cargar información de crimenes")
-    print("3- Consultar crimenes en una fecha")
-    print("4- Consultar crimenes por codigo y fecha")
+    print("2- Cargar información de accidentes")
+    print("3- Consultar accidentes en una fecha")
+    print("4- Estado con más accidentes")
+    print("6- Zona geográfica más accidentada")
     print("0- Salir")
     print("*******************************************")
 
@@ -69,21 +71,40 @@ while True:
         cont = controller.init()
 
     elif int(inputs[0]) == 2:
-        print("\nCargando información de crimenes ....")
-        controller.loadData(cont, crimefile)
-        print('Crimenes cargados: ' + str(controller.crimesSize(cont)))
+        
+        print("\nCargando información de accidentes ....")
+        accidentfile=input("escriba el nombre del archivo\n")
+        controller.loadData(cont, accidentfile)
+        print("si se necesita cargar mas archivos llame otra vez la funcion")
+        print('Accidentes cargados: ' + str(controller.accidentSize(cont)))
         print('Altura del arbol: ' + str(controller.indexHeight(cont)))
         print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
         print('Menor Llave: ' + str(controller.minKey(cont)))
         print('Mayor Llave: ' + str(controller.maxKey(cont)))
 
     elif int(inputs[0]) == 3:
-        print("\nBuscando crimenes en una fecha: ")
+        print("\nBuscando accidentes en una fecha: ")
         Date = input("Fecha (YYYY-MM-DD): ")
         total = controller.getCrimesBydate(cont,Date)
-        print("\nTotal de crimenes en el rango de fechas: " + str(total))
+        print("\nTotal de accidentes en el rango de fechas: " + str(total["total"]))
+        print(total)
+
+    elif int(inputs[0])==4:
+        print("Buscando estado con más accidentes")
+        initialDate = input("Rango Inicial (YYYY-MM-DD): ")
+        finalDate = input("Rango Final (YYYY-MM-DD): ")
+        initialDate2 = datetime.datetime.strptime(initialDate, '%Y-%m-%d')
+        finalDate2= datetime.datetime.strptime(finalDate, '%Y-%m-%d')
+        controller.estado_mayor(cont,initialDate2.date(),finalDate2.date())
+
+    elif int(inputs[0]) == 6:
+        lat=float(input("Ingrese latitud"))
+        lon=float(input("Ingrese longitud"))
+        radio=float(input("Ingrese radio"))
+        controller.bono(cont,lat,lon,radio)
 
 
     else:
         sys.exit(0)
 sys.exit(0)
+
