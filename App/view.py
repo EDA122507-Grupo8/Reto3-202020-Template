@@ -53,7 +53,7 @@ def printMenu():
     print("2- Cargar información de accidentes")
     print("3- Consultar accidentes en una fecha")
 
-    print("4- req 2")
+    print("5- nBuscando accidentes anteriores una fecha")
     print("7- conocer accidentes por rango de horas")
 
     print("4- Estado con más accidentes")
@@ -97,7 +97,7 @@ while True:
         print("\nTotal de accidentes en el rango de fechas: " + str(total["total"]))
         print(total)
     
-    elif  int(inputs[0]) == 4:
+    elif  int(inputs[0]) == 5:
         print("\nBuscando accidentes anteriores una fecha: \n")
         Date= input("Fecha (YYYY-MM-DD): \n")
         buscar = controller.getfechas_anteriores(cont,Date)
