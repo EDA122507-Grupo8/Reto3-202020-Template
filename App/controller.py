@@ -125,6 +125,7 @@ def getAccidentsBydate(analyzer, date):
 
 
 def estado_mayor(analyzer, initialDate, finalDate):
+
     """
     Retorna el total de crimenes en un rango de fechas
     """
@@ -139,4 +140,11 @@ def getfechas_anteriores(analyzer,Date):
     return model.fechas_anteriores(inicio,analyzer,theDate.date())
     
 
+
+
+    
+    return model.estado_mayor(analyzer, initialDate,
+                                  finalDate)
+def bono(arbol,lat,lon,radio):
+    return model.bono(arbol,lat,lon,radio)
 

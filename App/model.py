@@ -29,6 +29,7 @@ import datetime
 assert config
 from math import radians, cos, sin, asin, sqrt
 
+
 """
 En este archivo definimos los TADs que vamos a usar,
 es decir contiene los modelos con los datos en memoria
@@ -109,29 +110,46 @@ def updateDateIndex(map, accidente):
     return map
 
 def estado_mayor(analyzer, initial, final):
-    lst = om.values(analyzer['dateIndex'], initial, final)
-    mapa_retorno=m.newMap(20030,20111,maptype='CHAINING',loadfactor=0.9,comparefunction=None)
+    lst = om.values(analyzer['fechas'], initial, final)
     dict={}
-    retorno=""
+    dict_fechas={}
+    #mapa=mp.newMap(20030,20111,maptype='CHAINING',loadfactor=0.9,comparefunction=None)
     first=lst["first"]
-    print(lst)
     accidente=first["info"]["offenseIndex"]["table"]["elements"]
     for nodo in accidente:
         if nodo["value"]!=None:
             actual=nodo["value"]["lstoffenses"]["first"]["info"]["State"]
-            dict[actual]=1
-            #m.put(mapa_retorno,nodo["value"]["lstoffenses"]["first"]["info"]["DISTRICT"],1)
+            dict[actual]=dict.get(actual,0)+1
+            fecha=nodo["value"]["lstoffenses"]["first"]["info"]["Start_Time"]
+            fecha=fecha[0:10]
+            dict_fechas[fecha]=dict_fechas.get(fecha,0)+1
     then=lst["first"]["next"]
     #then=None
     while then!=None:
         accidente2=then["info"]["offenseIndex"]["table"]["elements"]
         for nodo in accidente2:
             if nodo["value"]!=None:
+                fecha2=nodo["value"]["lstoffenses"]["first"]["info"]["Start_Time"]
+                fecha2=fecha2[0:10]
+                dict_fechas[fecha2]=dict_fechas.get(fecha2,0)+1
                 actual2=nodo["value"]["lstoffenses"]["first"]["info"]["State"]
                 dict[actual2]=dict.get(actual2,0)+1
         then=then["next"]
+    max=0
+    dia=""
+    for llave in dict_fechas:
+        if dict_fechas[llave]>max:
+            max=dict_fechas[llave]
+            dia=llave
+    max2=0           
+    estado=""
+    for llave2 in dict:
+        if dict[llave2]>max2:
+            max2=dict[llave2]
+            estado=llave2
+
     
-    return print(dict)
+    return print((estado,max2),(dia,max))
 
 def addDateIndex(datentry, accidente):
     """
@@ -363,6 +381,7 @@ def bono(cont,lat,lon,radio):
     lon=radians(lon)
     dict={}
     contador=0
+    #arbol=cont["fechas"]
     first=cont["accidentes"]["first"]
     fecha_analisis_first=first["info"]["Start_Time"][0:10]
     day_first= datetime.datetime.strptime(fecha_analisis_first, '%Y-%m-%d').strftime("%A")

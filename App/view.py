@@ -25,6 +25,7 @@ import config
 from App import controller
 assert config
 import model as mdl
+import datetime
 """
 La vista se encarga de la interacción con el usuario.
 Presenta el menu de opciones  y  por cada seleccion
@@ -51,8 +52,13 @@ def printMenu():
     print("1- Inicializar Analizador")
     print("2- Cargar información de accidentes")
     print("3- Consultar accidentes en una fecha")
+
     print("4- req 2")
     print("7- conocer accidentes por rango de horas")
+
+    print("4- Estado con más accidentes")
+    print("6- Zona geográfica más accidentada")
+
     print("0- Salir")
     print("*******************************************")
 
@@ -100,10 +106,11 @@ while True:
 
 
 
-    elif int(inputs[0]) == 5:
-        #mdl.bono(cont,39.865150,-84.058720,1000000)
+    elif int(inputs[0])==4:
+        print("Buscando estado con más accidentes")
         initialDate = input("Rango Inicial (YYYY-MM-DD): ")
         finalDate = input("Rango Final (YYYY-MM-DD): ")
+
         mdl.prueba(cont,initialDate,finalDate)
         #controller.estado_mayor(cont, initialDate, finalDate)
     
@@ -113,6 +120,20 @@ while True:
         finalDate = input("Rango Final (HH:MM):\n")
         respuesta=controller.getAccidentsByRange(hours,initialDate,finalDate)
         print(respuesta)
+
+        initialDate2 = datetime.datetime.strptime(initialDate, '%Y-%m-%d')
+        finalDate2= datetime.datetime.strptime(finalDate, '%Y-%m-%d')
+        controller.estado_mayor(cont,initialDate2.date(),finalDate2.date())
+
+    elif int(inputs[0]) == 6:
+        lat=float(input("Ingrese latitud"))
+        lon=float(input("Ingrese longitud"))
+        radio=float(input("Ingrese radio"))
+        controller.bono(cont,lat,lon,radio)
+
+
+
     else:
         sys.exit(0)
 sys.exit(0)
+
