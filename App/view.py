@@ -38,7 +38,7 @@ operación seleccionada.
 # ___________________________________________________
 
 
-accidentfile = 'us_accidents_small.csv'
+accidentfile = 'us_accidents_dis_2016.csv'
 
 # ___________________________________________________
 #  Menu principal
@@ -52,8 +52,9 @@ def printMenu():
     print("1- Inicializar Analizador")
     print("2- Cargar información de accidentes")
     print("3- Consultar accidentes en una fecha")
-    print("4- Estado con más accidentes")
-    print("6- Zona geográfica más accidentada")
+    print("4- Estado con más accidentes")#Req 4
+    print("5- Consultar accidentes en un rango de fechas") #Req 3
+    print("6- Zona geográfica más accidentada")#Req 6
     print("0- Salir")
     print("*******************************************")
 
@@ -73,7 +74,6 @@ while True:
     elif int(inputs[0]) == 2:
         
         print("\nCargando información de accidentes ....")
-        accidentfile=input("escriba el nombre del archivo\n")
         controller.loadData(cont, accidentfile)
         print("si se necesita cargar mas archivos llame otra vez la funcion")
         print('Accidentes cargados: ' + str(controller.accidentSize(cont)))
@@ -90,12 +90,21 @@ while True:
         print(total)
 
     elif int(inputs[0])==4:
-        print("Buscando estado con más accidentes")
+        print("\nBuscando estado con más accidentes")
         initialDate = input("Rango Inicial (YYYY-MM-DD): ")
         finalDate = input("Rango Final (YYYY-MM-DD): ")
         initialDate2 = datetime.datetime.strptime(initialDate, '%Y-%m-%d')
         finalDate2= datetime.datetime.strptime(finalDate, '%Y-%m-%d')
         controller.estado_mayor(cont,initialDate2.date(),finalDate2.date())
+
+    elif int(inputs[0]) == 5:
+        print("\nBuscando accidentes en un rango de fechas: ")
+        Date_0 = input("Fecha inicial (YYYY-MM-DD): ")
+        Date_1 = input("Fecha final (YYYY-MM-DD): ")
+        total_accidentes_reportados = controller.getAccidentsNumberByRange(cont,Date_0,Date_1)
+        categoria_mas_reportada = controller.getAccidentsSeverityByRange(cont, Date_0, Date_1)
+        print("\nAccidentes reportados: " + str(total_accidentes_reportados) + ", categoria mas reportada: " + str(categoria_mas_reportada))
+
 
     elif int(inputs[0]) == 6:
         lat=float(input("Ingrese latitud"))

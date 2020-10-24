@@ -227,13 +227,71 @@ def getCrimesByRange(analyzer, initialDate, finalDate):
     """
     Retorna el numero de crimenes en un rago de fechas.
     """
-    lst = om.values(analyzer['dateIndex'], initialDate, finalDate)
+    lst = om.values(analyzer['fechas'], initialDate, finalDate)
     lstiterator = it.newIterator(lst)
     totcrimes = 0
     while (it.hasNext(lstiterator)):
         lstdate = it.next(lstiterator)
-        totcrimes += lt.size(lstdate['lstcrimes'])
+        totcrimes += lt.size(lstdate['accidentes'])
     return totcrimes
+
+
+def getAccidentsNumberByRange(analyzer, initialDate, finalDate):
+    """
+    Retorna el numero de crimenes en un rago de fechas.
+    """
+    lst = om.values(analyzer['fechas'], initialDate, finalDate)
+    tamanio = lt.size(lst)
+
+    for i in range(1, tamanio + 1):
+        lista = lt.getElement(lst, i)
+        medida_0 = lt.size(lista)
+        medida_1 += medida_0
+
+    print(medida_1)
+
+    return str(medida_1)
+
+
+
+def getAccidentsSeverityByRange(analyzer, initialDate, finalDate):
+    """
+    Retorna el numero de crimenes en un rago de fechas.
+    """
+    lst = om.values(analyzer['fechas'], initialDate, finalDate)
+    tamanio = lt.size(lst)
+
+    a1=0
+    a2=0
+    a3=0
+    a4=0
+
+    for i in range(1, tamanio + 1):
+        lista = lt.getElement(lst, i)
+        medida = lt.size(lista)
+        for j in range(1, medida + 1):
+            accidente = lt.getElement(lista,j)
+            if accidente['severity'] == '1':
+                a1 += 1
+            elif accidente['severity'] == '2':
+                a2 += 1
+            elif accidente['severity'] == '3':
+                a3 += 1
+            elif accidente['severity'] == '4':
+                a4 += 1
+    
+    maximo = max(a1,a2,a3,a4)
+    if maximo == a1:
+        maximo_return = '1'
+    if maximo == a2:
+        maximo_return = '2'
+    if maximo == a3:
+        maximo_return = '3'
+    if maximo == a4:
+        maximo_return = '4'
+
+    return maximo_return
+
 
 def getcrimesbydate(analyzer,date):
     lst=om.get(analyzer["fechas"],date)
