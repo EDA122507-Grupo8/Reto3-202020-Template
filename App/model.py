@@ -253,7 +253,6 @@ def maxKey(analyzer):
 def porcentaje(total,porcion):
     respuesta=(100/total)*porcion
     return(respuesta)
-    
 
 
 def getAccidentsByRange(analyzer, initialDate, finalDate):
@@ -261,11 +260,61 @@ def getAccidentsByRange(analyzer, initialDate, finalDate):
     Retorna el numero de crimenes en un rago de fechas.
     """
     lst = om.values(analyzer['fechas'], initialDate, finalDate)
-    
     lstiterator = it.newIterator(lst)
-    mejor=0
+    totcrimes=0
     while (it.hasNext(lstiterator)):
         lstdate = it.next(lstiterator)
+        totcrimes += lt.size(lstdate['accidentes'])
+    return totcrimes
+
+
+def getAccidentsNumberByRange(analyzer, initialDate, finalDate):
+    lst = om.values(analyzer['fechas'], initialDate, finalDate)
+    tamanio = lt.size(lst)
+
+    for i in range(1, tamanio + 1):
+        lista = lt.getElement(lst, i)
+        medida_0 = lt.size(lista)
+        medida_1 += medida_0
+    return str(medida_1)
+
+  
+def getAccidentsSeverityByRange(analyzer, initialDate, finalDate):
+    lst = om.values(analyzer['fechas'], initialDate, finalDate)
+    tamanio = lt.size(lst)
+    a1=0
+    a2=0
+    a3=0
+    a4=0
+
+    for i in range(1, tamanio + 1):
+        lista = lt.getElement(lst, i)
+        medida = lt.size(lista)
+        for j in range(1, medida + 1):
+            accidente = lt.getElement(lista,j)
+            if accidente['severity'] == '1':
+                a1 += 1
+            elif accidente['severity'] == '2':
+                a2 += 1
+            elif accidente['severity'] == '3':
+                a3 += 1
+            elif accidente['severity'] == '4':
+                a4 += 1
+    
+    maximo = max(a1,a2,a3,a4)
+    if maximo == a1:
+        maximo_return = '1'
+    if maximo == a2:
+        maximo_return = '2'
+    if maximo == a3:
+        maximo_return = '3'
+    if maximo == a4:
+        maximo_return = '4'
+
+    return maximo_return
+
+
+def getcrimesbydate(analyzer,date):
         a=getAccidentsbydate(analyzer,lstdate,2)
         if mejor == 0:
             mejor=a
@@ -284,23 +333,11 @@ def getAccidentsByRange(analyzer, initialDate, finalDate):
     mejor["porcentaje_a2"]=p2
     mejor["porcentaje_a3"]=p3
     mejor["porcentaje_a4"]=p4
-    
-
-    
     return mejor
-    
-        
-
-        
-
-        
-
     
 
 def getAccidentsbydate(analyzer,date,number):
-    
     lst=om.get(analyzer["fechas"],date)
-    
     a1=0
     a2=0
     a3=0
@@ -320,9 +357,6 @@ def getAccidentsbydate(analyzer,date,number):
 
     total_crimenes={"total":lt.size(lst["value"]["lstaccidents"]),"grado_1":a1,"grado_2":a2,"grado_3":a3,"grado_4":a4}
     return total_crimenes
-
-
-
 
 
 def compareIds(id1, id2):

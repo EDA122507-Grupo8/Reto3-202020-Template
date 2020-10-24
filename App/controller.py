@@ -104,6 +104,18 @@ def maxKey(analyzer):
     return model.maxKey(analyzer)
 
 
+def getAccidentsNumberByRange(analyzer, initialDate, finalDate):
+    initialDate = datetime.datetime.strptime(initialDate, '%Y-%m-%d')
+    finalDate = datetime.datetime.strptime(finalDate, '%Y-%m-%d')
+    return model.getAccidentsNumberByRange(analyzer, initialDate.date(), finalDate.date())
+
+
+def getAccidentsSeverityByRange(analyzer, initialDate, finalDate):
+    initialDate = datetime.datetime.strptime(initialDate, '%Y-%m-%d')
+    finalDate = datetime.datetime.strptime(finalDate, '%Y-%m-%d')
+    return model.getAccidentsSeverityByRange(analyzer, initialDate.date(), finalDate.date())
+    
+
 def getAccidentsByRange(analyzer, initialDate, finalDate):
     """
     Retorna el total de crimenes en un rango de fechas
