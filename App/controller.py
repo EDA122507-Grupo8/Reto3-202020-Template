@@ -52,7 +52,7 @@ def init():
 #  de datos en los modelos
 # ___________________________________________________
 
-def loadData(analyzer, archivo):
+def loadData(analyzer, archivo,number):
     """
     Carga los datos de los archivos CSV en el modelo
     """
@@ -60,7 +60,7 @@ def loadData(analyzer, archivo):
     input_file = csv.DictReader(open(archivo, encoding="utf-8"),
                                 delimiter=",")
     for accidente in input_file:
-        model.addAccident(analyzer, accidente)
+        model.addAccident(analyzer, accidente,number)
         
     return analyzer
 
@@ -105,48 +105,58 @@ def maxKey(analyzer):
 
 
 def getAccidentsNumberByRange(analyzer, initialDate, finalDate):
-    """
-    Retorna el total de crimenes en un rango de fechas
-    """
     initialDate = datetime.datetime.strptime(initialDate, '%Y-%m-%d')
     finalDate = datetime.datetime.strptime(finalDate, '%Y-%m-%d')
-    return model.getAccidentsNumberByRange(analyzer, initialDate.date(),
-                                  finalDate.date())
+    return model.getAccidentsNumberByRange(analyzer, initialDate.date(), finalDate.date())
 
 
 def getAccidentsSeverityByRange(analyzer, initialDate, finalDate):
     initialDate = datetime.datetime.strptime(initialDate, '%Y-%m-%d')
     finalDate = datetime.datetime.strptime(finalDate, '%Y-%m-%d')
-    category = model.getAccidentsSeverityByRange(analyzer, initialDate.date(), finalDate.date())
-    return category
+    return model.getAccidentsSeverityByRange(analyzer, initialDate.date(), finalDate.date())
+    
 
+def getAccidentsByRange(analyzer, initialDate, finalDate):
+    """
+    Retorna el total de crimenes en un rango de fechas
+    """
+    initialDate = datetime.datetime.strptime(initialDate, "%H:%M")
+    finalDate = datetime.datetime.strptime(finalDate, '%H:%M')
+    initialDate=model.conversion(initialDate)
+    finalDate=model.conversion(finalDate)
+    return model.getAccidentsByRange(analyzer, initialDate,
+                                  finalDate)
+    
 
-def getAccidentsNumberByRange(analyzer, initialDate, finalDate):
-    initialDate = datetime.datetime.strptime(initialDate, '%Y-%m-%d')
-    finalDate = datetime.datetime.strptime(finalDate, '%Y-%m-%d')
-    total = model.getAccidentsNumberByRange(analyzer, initialDate.date(), finalDate.date())
-    return total
-
-
-def getCrimesBydate(analyzer, date):
+def getAccidentsBydate(analyzer, date):
     fecha=datetime.datetime.strptime(date,"%Y-%m-%d")
-    retorno=model.getcrimesbydate(analyzer,fecha.date())
+    retorno=model.getAccidentsbydate(analyzer,fecha.date(),1)
     return retorno
 
 
 
-def getCrimesByRangeCode(analyzer, initialDate,
-                         offensecode):
+
+def estado_mayor(analyzer, initialDate, finalDate):
+
     """
-    Retorna el total de crimenes de un tipo especifico en una
-    fecha determinada
+    Retorna el total de crimenes en un rango de fechas
     """
     initialDate = datetime.datetime.strptime(initialDate, '%Y-%m-%d')
-    return model.getCrimesByRangeCode(analyzer, initialDate.date(),
-                                      offensecode)
-def estado_mayor(analyzer, initialDate, finalDate):
+    finalDate = datetime.datetime.strptime(finalDate, '%Y-%m-%d')
+    return model.estado_mayor(analyzer, initialDate.date(),
+                                  finalDate.date())
+
+def getfechas_anteriores(analyzer,Date):
+    theDate = datetime.datetime.strptime(Date, '%Y-%m-%d')
+    inicio= model.minKey(analyzer)
+    return model.fechas_anteriores(inicio,analyzer,theDate.date())
+    
+
+
+
     
     return model.estado_mayor(analyzer, initialDate,
                                   finalDate)
 def bono(arbol,lat,lon,radio):
     return model.bono(arbol,lat,lon,radio)
+

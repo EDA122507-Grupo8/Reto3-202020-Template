@@ -54,13 +54,16 @@ def newAnalyzer():
     -Fechas
 
     Retorna el analizador inicializado.
+
     """
+    clasificacion = "fechas"
+    
     analyzer = {'accidentes': None,
-                'fechas': None
+                clasificacion: None
                 }
 
     analyzer['accidentes'] = lt.newList('SINGLE_LINKED', compareIds)
-    analyzer['fechas'] = om.newMap(omaptype='RBT',
+    analyzer[clasificacion] = om.newMap(omaptype='RBT',
                                       comparefunction=compareDates)
     return analyzer
 
@@ -68,11 +71,20 @@ def newAnalyzer():
 # Funciones para agregar informacion al catalogo
 
 
-def addAccident(analyzer, accidente):
+def addAccident(analyzer, accidente,number):
     """
     """
-    lt.addLast(analyzer['accidentes'], accidente)
-    updateDateIndex(analyzer['fechas'], accidente)
+    if number == 1:
+        clasificacion = "fechas"
+        lt.addLast(analyzer['accidentes'], accidente)
+        updateDateIndex(analyzer[clasificacion], accidente)
+    
+    else: 
+        clasificacion = "fechas"
+        lt.addLast(analyzer['accidentes'], accidente)
+        updateDateIndex2(analyzer[clasificacion], accidente)
+
+    
     return analyzer
 
 
@@ -88,6 +100,7 @@ def updateDateIndex(map, accidente):
     occurreddate = accidente['Start_Time']
     accidentdate = datetime.datetime.strptime(occurreddate, '%Y-%m-%d %H:%M:%S')
     entry = om.get(map, accidentdate.date())
+    
     if entry is None:
         datentry = newDataEntry(accidente)
         om.put(map, accidentdate.date(), datentry)
@@ -199,37 +212,56 @@ def indexHeight(analyzer):
     """
     Altura del arbol
     """
-    return om.height(analyzer['fechas'])
+    
+    respuesta=om.height(analyzer['fechas'])
+    return (respuesta)
 
 
 def indexSize(analyzer):
     """
     Numero de elementos en el indice
     """
-    return om.size(analyzer['fechas'])
+    
+    respuesta=om.size(analyzer['fechas'])
+    
+    return (respuesta)
+    
 
 
 def minKey(analyzer):
     """
     Llave mas pequena
     """
-    return om.minKey(analyzer['fechas'])
+    
+    respuesta=om.minKey(analyzer['fechas'])
+    
+    return (respuesta)
+    
+    
 
 
 def maxKey(analyzer):
     """
     Llave mas grande
     """
-    return om.maxKey(analyzer['fechas'])
+    
+    respuesta=om.maxKey(analyzer['fechas'])
+    
+    return (respuesta)
+    
+    
+def porcentaje(total,porcion):
+    respuesta=(100/total)*porcion
+    return(respuesta)
 
 
-def getCrimesByRange(analyzer, initialDate, finalDate):
+def getAccidentsByRange(analyzer, initialDate, finalDate):
     """
     Retorna el numero de crimenes en un rago de fechas.
     """
     lst = om.values(analyzer['fechas'], initialDate, finalDate)
     lstiterator = it.newIterator(lst)
-    totcrimes = 0
+    totcrimes=0
     while (it.hasNext(lstiterator)):
         lstdate = it.next(lstiterator)
         totcrimes += lt.size(lstdate['accidentes'])
@@ -237,9 +269,6 @@ def getCrimesByRange(analyzer, initialDate, finalDate):
 
 
 def getAccidentsNumberByRange(analyzer, initialDate, finalDate):
-    """
-    Retorna el numero de crimenes en un rago de fechas.
-    """
     lst = om.values(analyzer['fechas'], initialDate, finalDate)
     tamanio = lt.size(lst)
 
@@ -247,20 +276,12 @@ def getAccidentsNumberByRange(analyzer, initialDate, finalDate):
         lista = lt.getElement(lst, i)
         medida_0 = lt.size(lista)
         medida_1 += medida_0
-
-    print(medida_1)
-
     return str(medida_1)
 
-
-
+  
 def getAccidentsSeverityByRange(analyzer, initialDate, finalDate):
-    """
-    Retorna el numero de crimenes en un rago de fechas.
-    """
     lst = om.values(analyzer['fechas'], initialDate, finalDate)
     tamanio = lt.size(lst)
-
     a1=0
     a2=0
     a3=0
@@ -294,13 +315,35 @@ def getAccidentsSeverityByRange(analyzer, initialDate, finalDate):
 
 
 def getcrimesbydate(analyzer,date):
+        a=getAccidentsbydate(analyzer,lstdate,2)
+        if mejor == 0:
+            mejor=a
+        else:
+            mejor["total"]+=a["total"]
+            mejor["grado_1"]+=a["grado_1"]
+            mejor["grado_2"]+=a["grado_2"]
+            mejor["grado_3"]+=a["grado_3"]
+            mejor["grado_4"]+=a["grado_4"]
+        
+    p1=porcentaje(mejor["total"],mejor["grado_1"])
+    p2=porcentaje(mejor["total"],mejor["grado_2"])
+    p3=porcentaje(mejor["total"],mejor["grado_3"])
+    p4=porcentaje(mejor["total"],mejor["grado_4"])
+    mejor["porcentaje_a1"]=p1
+    mejor["porcentaje_a2"]=p2
+    mejor["porcentaje_a3"]=p3
+    mejor["porcentaje_a4"]=p4
+    return mejor
+    
+
+def getAccidentsbydate(analyzer,date,number):
     lst=om.get(analyzer["fechas"],date)
-    #print(lst)
-    pos=lst["value"]["lstaccidents"]["first"]
     a1=0
     a2=0
     a3=0
     a4=0
+    
+    pos=lst["value"]["lstaccidents"]["first"]
     while pos!=None:
         if pos["info"]["Severity"]=="1":
             a1+=1
@@ -314,24 +357,6 @@ def getcrimesbydate(analyzer,date):
 
     total_crimenes={"total":lt.size(lst["value"]["lstaccidents"]),"grado_1":a1,"grado_2":a2,"grado_3":a3,"grado_4":a4}
     return total_crimenes
-
-
-def getCrimesByRangeCode(analyzer, initialDate, offensecode):
-    """
-    Para una fecha determinada, retorna el numero de crimenes
-    de un tipo especifico.
-    """
-    crimedate = om.get(analyzer['dateIndex'], initialDate)
-    if crimedate['key'] is not None:
-        offensemap = me.getValue(crimedate)['offenseIndex']
-        numoffenses = m.get(offensemap, offensecode)
-        if numoffenses is not None:
-            return m.size(me.getValue(numoffenses)['lstoffenses'])
-        return 0
-
-# ==============================
-# Funciones de Comparacion
-# ==============================
 
 
 def compareIds(id1, id2):
@@ -422,3 +447,48 @@ def bono(cont,lat,lon,radio):
         then=then["next"]
 
     return print(dict,"El total es "+str(contador))
+
+def fechas_anteriores(start,analyzer,Date):
+    lst = om.values(analyzer['fechas'],start,Date)
+    
+    llave=lst["first"]
+    mayor=0
+    mejor=None
+    total=0
+    while llave!=None:
+        day=om.get(analyzer["fechas"],llave["info"])
+        if day["value"]["lstaccidents"]["size"] > mayor:
+            mejor=(llave["info"].strftime('%Y-%m-%d'),day["value"]["lstaccidents"]["size"])
+            mayor=day["value"]["lstaccidents"]["size"]
+        llave=llave["next"]
+        total+=day["value"]["lstaccidents"]["size"]
+        
+    return {"total de dias:":lst["size"],"dia con mas accidentes":mejor,"total de accidentes:":total}
+
+def updateDateIndex2(map, accidente):
+    occurreddate = accidente['Start_Time']
+   
+    accidentdate = datetime.datetime.strptime(occurreddate, '%Y-%m-%d %H:%M:%S')
+    entry = om.get(map, conversion(accidentdate))
+    
+    
+    if entry is None:
+        datentry = newDataEntry(accidente)
+        om.put(map, conversion(accidentdate), datentry)
+    else:
+        datentry = me.getValue(entry)
+    addDateIndex(datentry, accidente)
+    return map
+
+def conversion(accidente):
+    if accidente.minute<= 15:
+        accidente=datetime.time(accidente.hour,0)
+    elif accidente.minute<= 45:
+        accidente=datetime.time(accidente.hour,30)
+    else:
+        if accidente.hour < 23:
+            accidente=datetime.time((accidente.hour)+1,0)
+        else:
+            accidente=datetime.time(23,59)
+    return accidente
+        
